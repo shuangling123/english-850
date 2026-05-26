@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🐱 猫猫英语 850词 — 宝宝启蒙</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(135deg,#FFF3E0,#FFE0B2);min-height:100vh;touch-action:manipulation;user-select:none;-webkit-user-select:none;overflow-x:hidden}
+.header{background:linear-gradient(135deg,#FF6F00,#FF8F00);color:#fff;padding:12px;text-align:center;box-shadow:0 4px 16px rgba(255,111,0,.3);position:sticky;top:0;z-index:100}
+.header h1{font-size:22px}.header .sub{font-size:12px;opacity:.85;margin-top:2px}
+.stats{display:flex;justify-content:space-around;padding:10px;background:#fff;margin:8px 10px;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.stat{text-align:center}.stat .num{font-size:24px;font-weight:bold;color:#FF6F00}.stat .label{font-size:11px;color:#999}
+.tabs{display:flex;gap:4px;padding:6px 10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:7px 14px;border-radius:20px;border:2px solid #FFCC80;background:#fff;font-size:12px;white-space:nowrap;cursor:pointer;transition:all .15s;flex-shrink:0}
+.tab.active{background:#FF6F00;color:#fff;border-color:#FF6F00}
+.content{padding:10px;max-width:700px;margin:0 auto}
+.mode-bar{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.mode-btn{flex:1;min-width:60px;padding:10px 6px;border-radius:12px;border:none;font-size:14px;font-weight:bold;cursor:pointer;transition:all .15s;background:#fff;color:#999}
+.mode-btn.active{transform:scale(1.03);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.mode-btn.learn{color:#E65100}.mode-btn.learn.active{background:#FFF3E0}
+.mode-btn.quiz{color:#2E7D32}.mode-btn.quiz.active{background:#E8F5E9}
+.mode-btn.speak{color:#1565C0}.mode-btn.speak.active{background:#E3F2FD}
+.mode-btn.trace{color:#6A1B9A}.mode-btn.trace.active{background:#F3E5F5}
+
+.card-container{perspective:1000px;margin-bottom:10px}
+.card{width:100%;min-height:220px;position:relative;cursor:pointer}
+.card-inner{width:100%;min-height:220px;background:#fff;border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,.1);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.card .emoji-big{font-size:64px;line-height:1.2}
+.card .word-en{font-size:36px;font-weight:bold;color:#E65100;margin:6px 0}
+.word-ipa{font-size:20px;color:#FF9800;margin:2px 0;font-family:'Segoe UI','Arial Unicode MS','Lucida Sans Unicode',sans-serif}
+.card .word-cn{font-size:22px;color:#666}
+.card .tap-hint{font-size:12px;color:#bbb;margin-top:8px}
+.card-nav{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.nav-btn{width:50px;height:50px;border-radius:50%;border:none;background:#FF6F00;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 3px 8px rgba(255,111,0,.3)}
+.nav-btn:active{transform:scale(.9)}
+.nav-btn:disabled{opacity:.3}
+.counter{font-size:14px;color:#999}
+
+/* Quiz */
+.quiz-area{text-align:center}
+.quiz-prompt{font-size:32px;margin:10px 0}
+.quiz-prompt .emoji-big{font-size:72px}
+.quiz-prompt .cn{font-size:24px;color:#666;margin-top:4px}
+.quiz-type-label{font-size:12px;color:#999;margin-bottom:6px;background:#f5f5f5;display:inline-block;padding:4px 12px;border-radius:10px}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.quiz-opt{padding:16px;border-radius:14px;border:3px solid #FFCC80;background:#fff;font-size:20px;font-weight:bold;cursor:pointer;transition:all .2s;color:#E65100}
+.quiz-opt:active{transform:scale(.95)}
+.quiz-opt.correct{background:#C8E6C9;border-color:#4CAF50;animation:pulse .5s}
+.quiz-opt.wrong{background:#FFCDD2;border-color:#F44336;animation:shake .4s}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.quiz-score{font-size:18px;font-weight:bold;color:#FF6F00;margin-top:8px}
+
+/* Spelling input */
+.spell-input{width:80%;max-width:300px;padding:14px;border-radius:14px;border:3px solid #FFCC80;font-size:24px;text-align:center;outline:none;margin:10px 0}
+.spell-input:focus{border-color:#FF6F00}
+.spell-submit{padding:12px 32px;border-radius:14px;border:none;background:#FF6F00;color:#fff;font-size:18px;font-weight:bold;cursor:pointer;margin-top:8px}
+
+/* Speak mode */
+.speak-card{text-align:center;background:#fff;border-radius:20px;padding:30px 20px;box-shadow:0 6px 24px rgba(0,0,0,.1)}
+.speak-word{font-size:42px;font-weight:bold;color:#1565C0;margin:10px 0}
+.speak-cn{font-size:22px;color:#666;margin-bottom:20px}
+.mic-btn{width:90px;height:90px;border-radius:50%;border:4px solid #ddd;background:#fff;font-size:40px;cursor:pointer;transition:all .2s;margin:10px}
+.mic-btn.listening{border-color:#F44336;background:#FFEBEE;animation:pulse .8s infinite}
+.mic-btn.success{border-color:#4CAF50;background:#E8F5E9}
+.speak-result{font-size:20px;margin-top:12px;min-height:30px}
+
+/* Trace mode */
+.trace-container{text-align:center;background:#fff;border-radius:20px;padding:20px;box-shadow:0 6px 24px rgba(0,0,0,.1)}
+.trace-canvas{border:2px dashed #ddd;border-radius:12px;cursor:crosshair;touch-action:none;background:#FFFDE7}
+.trace-word{font-size:16px;color:#999;margin-bottom:8px}
+.trace-tools{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.trace-tool{padding:8px 16px;border-radius:20px;border:2px solid #CE93D8;background:#fff;font-size:14px;cursor:pointer;color:#6A1B9A}
+.trace-tool:active{background:#F3E5F5}
+.trace-tool.active{background:#6A1B9A;color:#fff}
+
+/* Star animation */
+.star-burst{position:fixed;pointer-events:none;font-size:40px;animation:starUp .8s forwards;z-index:999}
+@keyframes starUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-120px) scale(1.8)}}
+
+/* Progress */
+.cat-progress{display:flex;gap:3px;margin-top:4px}
+
+@media(min-width:600px){.quiz-options{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>🐱 猫猫英语 850词</h1>
+<div class="sub">Basic English · 宝宝启蒙 · 听说读写</div>
+</div>
+
+<div class="stats">
+<div class="stat"><div class="num" id="totalLearned">0</div><div class="label">📝 已学</div></div>
+<div class="stat"><div class="num" id="streakCount">0</div><div class="label">🔥 连对</div></div>
+<div class="stat"><div class="num">⭐</div><div class="label" id="starCount">0</div></div>
+<div class="stat"><div class="num" id="totalWords">0</div><div class="label">📚 总词数</div></div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="content">
+<div class="mode-bar">
+<button class="mode-btn learn active" onclick="setMode('learn')">📖 学单词</button>
+<button class="mode-btn quiz" onclick="setMode('quiz')">🎯 测验</button>
+<button class="mode-btn speak" onclick="setMode('speak')">🎤 跟读</button>
+<button class="mode-btn trace" onclick="setMode('trace')">✏️ 描红</button>
+</div>
+<div id="mainArea"></div>
+</div>
+
+<script>
+// ============ FULL 850 BASIC ENGLISH WORDS ============
+const WORDS = {
+"🐱 动物 Animals": [
+["cat","猫","kˈæt"],["dog","狗","dˈɔɡ"],["bird","鸟","bˈɝd"],["fish","鱼","fˈɪʃ"],["horse","马","hˈɔrs"],["cow","牛","kˈaʊ"],["pig","猪","pˈɪɡ"],["sheep","羊","ʃˈip"],["monkey","猴子","mˈʌŋki"],["snake","蛇","snˈeɪk"],["rabbit","兔子","rˈæbət"],["mouse","老鼠","mˈaʊs"],["frog","青蛙","frˈɑɡ"],["bear","熊","bˈɛr"],["duck","鸭子","dˈʌk"],["chicken","鸡","tʃˈɪkən"],["goat","山羊","ɡˈoʊt"],["elephant","大象","ˈɛləfənt"],["lion","狮子","lˈaɪən"],["tiger","老虎","tˈaɪɡɚ"],["ant","蚂蚁","ˈænt"],["bee","蜜蜂","bˈi"],["butterfly","蝴蝶","bˈʌtɚflˌaɪ"],["fly","苍蝇","flˈaɪ"],["spider","蜘蛛","spˈaɪdɚ"],["worm","虫子","wˈɝm"],["whale","鲸鱼","wˈeɪl"],["fox","狐狸","fˈɑks"],["owl","猫头鹰","ˈaʊl"],["turtle","乌龟","tˈɝtəl"],["rat","老鼠","rˈæt"],["insect","昆虫","ˈɪnsˌɛkt"],["snail","蜗牛","snˈeɪl"],["deer","鹿","dˈɪr"],["wolf","狼","wˈʊlf"],["crocodile","鳄鱼","krˈɑkədˌaɪl"],["shark","鲨鱼","ʃˈɑrk"],["crab","螃蟹","krˈæb"],["penguin","企鹅","pˈɛŋɡwən"],["dinosaur","恐龙","dˈaɪnəsˌɔr"],["dragon","龙","drˈæɡən"],["parrot","鹦鹉","pˈɛrət"],["dolphin","海豚","dˈɑlfən"],["squirrel","松鼠","skwˈɝəl"],["animal","动物","ˈænəməl"],
+],
+"🍎 食物饮食 Food & Drink": [
+["apple","苹果","ˈæpəl"],["banana","香蕉","bənˈænə"],["orange","橙子","ˈɔrəndʒ"],["bread","面包","brˈɛd"],["butter","黄油","bˈʌtɚ"],["cake","蛋糕","kˈeɪk"],["cheese","奶酪","tʃˈiz"],["egg","蛋","ˈɛɡ"],["meat","肉","mˈit"],["milk","牛奶","mˈɪlk"],["rice","米饭","rˈaɪs"],["salt","盐","sˈɔlt"],["sugar","糖","ʃˈʊɡɚ"],["water","水","wˈɔtɚ"],["soup","汤","sˈup"],["potato","土豆","pətˈeɪtˌoʊ"],["tomato","番茄","təmˈeɪtˌoʊ"],["fruit","水果","frˈut"],["grape","葡萄","ɡrˈeɪp"],["lemon","柠檬","lˈɛmən"],["chocolate","巧克力","tʃˈɔklət"],["cookie","饼干","kˈʊki"],["ice cream","冰淇淋","ˈaɪs krˈim"],["candy","糖果","kˈændi"],["juice","果汁","dʒˈus"],["noodle","面条","nˈudəl"],["honey","蜂蜜","hˈʌni"],["jam","果酱","dʒˈæm"],["tea","茶","tˈi"],["coffee","咖啡","kˈɑfi"],["wine","酒","wˈaɪn"],["beer","啤酒","bˈɪr"],["meal","餐","mˈil"],["food","食物","fˈud"],["drink","饮料","drˈɪŋk"],["taste","味道","tˈeɪst"],["sweet","甜的","swˈit"],["sour","酸的","sˈaʊɚ"],["bitter","苦的","bˈɪtɚ"],["cook","烹饪","kˈʊk"],["oil","油","ˈɔɪl"],["fish","鱼","fˈɪʃ"],["nut","坚果","nˈʌt"],["berry","浆果","bˈɛri"],["grain","谷物","ɡrˈeɪn"],["cream","奶油","krˈim"],["salad","沙拉","sˈæləd"],
+],
+"👤 身体部位 Body": [
+["head","头","hˈɛd"],["eye","眼睛","ˈaɪ"],["ear","耳朵","ˈir"],["nose","鼻子","nˈoʊz"],["mouth","嘴","mˈaʊθ"],["tooth","牙齿","tˈuθ"],["tongue","舌头","tˈʌŋ"],["lip","嘴唇","lˈɪp"],["chin","下巴","tʃˈɪn"],["neck","脖子","nˈɛk"],["back","背","bˈæk"],["arm","手臂","ˈɑrm"],["hand","手","hˈænd"],["finger","手指","fˈɪŋɡɚ"],["thumb","拇指","θˈʌm"],["leg","腿","lˈɛɡ"],["foot","脚","fˈʊt"],["knee","膝盖","nˈi"],["toe","脚趾","tˈoʊ"],["heart","心脏","hˈɑrt"],["blood","血液","blˈʌd"],["bone","骨头","bˈoʊn"],["brain","大脑","brˈeɪn"],["hair","头发","hˈɛr"],["face","脸","fˈeɪs"],["skin","皮肤","skˈɪn"],["stomach","肚子","stˈʌmək"],["muscle","肌肉","mˈʌsəl"],["nail","指甲","nˈeɪl"],["throat","喉咙","θrˈoʊt"],["chest","胸","tʃˈɛst"],["nerve","神经","nˈɝv"],["body","身体","bˈɑdi"],["tail","尾巴","tˈeɪl"],["wing","翅膀","wˈɪŋ"],["horn","角","hˈɔrn"],["breath","呼吸","brˈɛθ"],["voice","声音","vˈɔɪs"],["hearing","听力","hˈirɨŋ"],["smell","嗅觉","smˈɛl"],["touch","触觉","tˈʌtʃ"],
+],
+"👨‍👩‍👧 人物角色 People": [
+["mother","妈妈","mˈʌðɚ"],["father","爸爸","fˈɑðɚ"],["sister","姐妹","sˈɪstɚ"],["brother","兄弟","brˈʌðɚ"],["baby","婴儿","bˈeɪbi"],["boy","男孩","bˈɔɪ"],["girl","女孩","ɡˈɝl"],["man","男人","mˈæn"],["woman","女人","wˈʊmən"],["child","小孩","tʃˈaɪld"],["friend","朋友","frˈɛnd"],["family","家庭","fˈæməli"],["son","儿子","sˈʌn"],["daughter","女儿","dˈɔtɚ"],["husband","丈夫","hˈʌzbənd"],["wife","妻子","wˈaɪf"],["person","人","pˈɝsən"],["people","人们","pˈipəl"],["doctor","医生","dˈɑktɚ"],["teacher","老师","tˈitʃɚ"],["nurse","护士","nˈɝs"],["king","国王","kˈɪŋ"],["queen","王后","kwˈin"],["police","警察","pəlˈis"],["neighbor","邻居","nˈeɪbɚ"],["student","学生","stˈudənt"],["worker","工人","wˈɝkɚ"],["boss","老板","bˈɑs"],["driver","司机","drˈaɪvɚ"],["cook","厨师","kˈʊk"],["servant","仆人","sˈɝvənt"],["secretary","秘书","sˈɛkrətˌɛri"],["manager","经理","mˈænədʒɚ"],["judge","法官","dʒˈʌdʒ"],["officer","军官","ˈɔfəsɚ"],["representative","代表","rˌɛprəzˈɛntətɨv"],["expert","专家","ˈɛkspɚt"],["owner","主人","ˈoʊnɚ"],["prisoner","囚犯","prˈɪzənɚ"],["porter","搬运工","pˈɔrtɚ"],
+],
+"🏠 家居日常 Home": [
+["house","房子","hˈaʊs"],["door","门","dˈɔr"],["window","窗户","wˈɪndoʊ"],["wall","墙","wˈɔl"],["floor","地板","flˈɔr"],["roof","屋顶","rˈuf"],["room","房间","rˈum"],["bed","床","bˈɛd"],["table","桌子","tˈeɪbəl"],["chair","椅子","tʃˈɛr"],["kitchen","厨房","kˈɪtʃən"],["bath","浴缸","bˈæθ"],["clock","钟","klˈɑk"],["key","钥匙","kˈi"],["lock","锁","lˈɑk"],["box","盒子","bˈɑks"],["basket","篮子","bˈæskət"],["bottle","瓶子","bˈɑtəl"],["cup","杯子","kˈʌp"],["plate","盘子","plˈeɪt"],["fork","叉子","fˈɔrk"],["knife","刀","nˈaɪf"],["spoon","勺子","spˈun"],["pot","锅","pˈɑt"],["mirror","镜子","mˈɪrɚ"],["soap","肥皂","sˈoʊp"],["brush","刷子","brˈʌʃ"],["lamp","灯","lˈæmp"],["bell","铃铛","bˈɛl"],["candle","蜡烛","kˈændəl"],["book","书","bˈʊk"],["picture","图画","pˈɪktʃɚ"],["money","钱","mˈʌni"],["ring","戒指","rˈɪŋ"],["umbrella","雨伞","əmbrˈɛlə"],["bag","包","bˈæɡ"],["broom","扫帚","brˈum"],["pillow","枕头","pˈɪloʊ"],["blanket","毯子","blˈæŋkət"],["toy","玩具","tˈɔɪ"],["curtain","窗帘","kˈɝtən"],["cushion","靠垫","kˈʊʃən"],["drawer","抽屉","drˈɔr"],["shelf","架子","ʃˈɛlf"],["comb","梳子","kˈoʊm"],["cord","绳子","kˈɔrd"],["bucket","桶","bˈʌkət"],["basin","盆","bˈeɪsən"],["drain","下水道","drˈeɪn"],["oven","烤箱","ˈʌvən"],
+],
+"🌳 自然世界 Nature": [
+["sun","太阳","sˈʌn"],["moon","月亮","mˈun"],["star","星星","stˈɑr"],["sky","天空","skˈaɪ"],["cloud","云","klˈaʊd"],["rain","雨","rˈeɪn"],["snow","雪","snˈoʊ"],["wind","风","wˈaɪnd"],["flower","花","flˈaʊɚ"],["tree","树","trˈi"],["leaf","叶子","lˈif"],["grass","草","ɡrˈæs"],["river","河","rˈɪvɚ"],["sea","海","sˈi"],["mountain","山","mˈaʊntən"],["island","岛","ˈaɪlənd"],["fire","火","fˈaɪɚ"],["water","水","wˈɔtɚ"],["earth","地球","ˈɝθ"],["stone","石头","stˈoʊn"],["sand","沙子","sˈænd"],["ice","冰","ˈaɪs"],["smoke","烟","smˈoʊk"],["air","空气","ˈɛr"],["light","光","lˈaɪt"],["thunder","雷","θˈʌndɚ"],["rainbow","彩虹","rˈeɪnbˌoʊ"],["forest","森林","fˈɔrəst"],["garden","花园","ɡˈɑrdən"],["farm","农场","fˈɑrm"],["mist","雾","mˈɪst"],["wave","波浪","wˈeɪv"],["field","田野","fˈild"],["stream","溪流","strˈim"],["lake","湖","lˈeɪk"],["hill","小山","hˈɪl"],["rock","岩石","rˈɑk"],["dust","灰尘","dˈʌst"],["weather","天气","wˈɛðɚ"],["summer","夏天","sˈʌmɚ"],["winter","冬天","wˈɪntɚ"],["spring","春天","sprˈɪŋ"],["snow","雪","snˈoʊ"],["wind","风","wˈaɪnd"],["thunder","雷","θˈʌndɚ"],["flame","火焰","flˈeɪm"],["heat","热","hˈit"],
+],
+"🎨 颜色形状 Colors & Shapes": [
+["red","红色","rˈɛd"],["blue","蓝色","blˈu"],["green","绿色","ɡrˈin"],["yellow","黄色","jˈɛloʊ"],["black","黑色","blˈæk"],["white","白色","wˈaɪt"],["brown","棕色","brˈaʊn"],["grey","灰色","ɡrˈeɪ"],["pink","粉色","pˈɪŋk"],["orange","橙色","ˈɔrəndʒ"],["purple","紫色","pˈɝpəl"],["gold","金色","ɡˈoʊld"],["silver","银色","sˈɪlvɚ"],["circle","圆形","sˈɝkəl"],["square","正方形","skwˈɛr"],["line","线","lˈaɪn"],["dot","点","dˈɑt"],["cross","十字","krˈɔs"],["star","星形","stˈɑr"],["ring","环形","rˈɪŋ"],["round","圆的","rˈaʊnd"],["straight","直的","strˈeɪt"],["flat","平的","flˈæt"],["curve","曲线","kˈɝv"],["angle","角","ˈæŋɡəl"],["bent","弯的","bˈɛnt"],["mixed","混合的","mˈɪkst"],["dark","暗的","dˈɑrk"],["bright","明亮的","brˈaɪt"],["hanging","悬挂的","hˈæŋɨŋ"],["parallel","平行的","pˈɛrəlˌɛl"],
+],
+"🔢 数字时间 Numbers & Time": [
+["one","一","wˈʌn"],["two","二","tˈu"],["three","三","θrˈi"],["four","四","fˈɔr"],["five","五","fˈaɪv"],["six","六","sˈɪks"],["seven","七","sˈɛvən"],["eight","八","ˈeɪt"],["nine","九","nˈaɪn"],["ten","十","tˈɛn"],["hundred","百","hˈʌndrəd"],["thousand","千","θˈaʊzənd"],["first","第一","fˈɝst"],["second","第二","sˈɛkənd"],["last","最后","lˈæst"],["day","天","dˈeɪ"],["night","夜晚","nˈaɪt"],["week","周","wˈik"],["month","月","mˈʌnθ"],["year","年","jˈɪr"],["morning","早上","mˈɔrnɨŋ"],["afternoon","下午","ˌæftɚnˈun"],["evening","晚上","ˈivnɨŋ"],["hour","小时","ˈaʊɚ"],["minute","分钟","mˈɪnət"],["time","时间","tˈaɪm"],["today","今天","tədˈeɪ"],["tomorrow","明天","təmˈɑrˌoʊ"],["yesterday","昨天","jˈɛstɚdˌeɪ"],["now","现在","nˈaʊ"],["early","早的","ˈɝli"],["late","晚的","lˈeɪt"],["soon","很快","sˈun"],["never","从不","nˈɛvɚ"],["always","总是","ˈɔlwˌeɪz"],["again","再次","əɡˈɛn"],["ever","曾经","ˈɛvɚ"],["still","仍然","stˈɪl"],["then","然后","ðˈɛn"],["future","未来","fjˈutʃɚ"],["past","过去","pˈæst"],["present","现在","prˈɛzənt"],["number","数字","nˈʌmbɚ"],["count","计数","kˈaʊnt"],["half","一半","hˈæf"],["all","全部","ˈɔl"],["some","一些","sˈʌm"],["any","任何","ˈɛni"],["no","没有","nˈoʊ"],["every","每个","ˈɛvɚi"],
+],
+"🏃 动作词 Actions": [
+["come","来","kˈʌm"],["get","得到","ɡˈɛt"],["give","给","ɡˈɪv"],["go","去","ɡˈoʊ"],["keep","保持","kˈip"],["let","让","lˈɛt"],["make","做","mˈeɪk"],["put","放","pˈʊt"],["seem","似乎","sˈim"],["take","拿","tˈeɪk"],["be","是","bˈi"],["do","做","dˈu"],["have","有","hˈæv"],["say","说","sˈeɪ"],["see","看见","sˈi"],["send","发送","sˈɛnd"],["may","可以","mˈeɪ"],["will","将会","wˈɪl"],["run","跑","rˈʌn"],["walk","走","wˈɔk"],["jump","跳","dʒˈʌmp"],["sit","坐","sˈɪt"],["stand","站","stˈænd"],["sleep","睡觉","slˈip"],["eat","吃","ˈit"],["drink","喝","drˈɪŋk"],["hear","听见","hˈir"],["open","打开","ˈoʊpən"],["close","关","klˈoʊs"],["push","推","pˈʊʃ"],["pull","拉","pˈʊl"],["turn","转","tˈɝn"],["stop","停下","stˈɑp"],["start","开始","stˈɑrt"],["play","玩","plˈeɪ"],["wash","洗","wˈɑʃ"],["read","读","rˈɛd"],["write","写","rˈaɪt"],["sing","唱歌","sˈɪŋ"],["dance","跳舞","dˈæns"],["swim","游泳","swˈɪm"],["cry","哭","krˈaɪ"],["laugh","笑","lˈæf"],["smile","微笑","smˈaɪl"],["love","爱","lˈʌv"],["hate","讨厌","hˈeɪt"],["think","想","θˈɪŋk"],["know","知道","nˈoʊ"],["help","帮助","hˈɛlp"],["find","找到","fˈaɪnd"],["fall","掉落","fˈɔl"],["break","打破","brˈeɪk"],["cut","切","kˈʌt"],["hit","打","hˈɪt"],["kick","踢","kˈɪk"],["catch","接住","kˈætʃ"],["throw","扔","θrˈoʊ"],["fly","飞","flˈaɪ"],["move","移动","mˈuv"],["join","加入","dʒˈɔɪn"],["kick","踢","kˈɪk"],["kiss","亲吻","kˈɪs"],["lift","举起","lˈɪft"],["roll","滚动","rˈoʊl"],["rub","摩擦","rˈʌb"],["shake","摇晃","ʃˈeɪk"],["stretch","伸展","strˈɛtʃ"],["talk","说话","tˈɔk"],["touch","触摸","tˈʌtʃ"],["wait","等待","wˈeɪt"],["work","工作","wˈɝk"],["off","关","ˈɔf"],["on","开","ˈɑn"],["in","在里面","ɨn"],["out","在外面","ˈaʊt"],["up","向上","ˈʌp"],["down","向下","dˈaʊn"],["over","在...上方","ˈoʊvɚ"],["under","在...下方","ˈʌndɚ"],["through","通过","θrˈu"],["between","在...之间","bɨtwˈin"],["before","在...之前","bɨfˈɔr"],["after","在...之后","ˈæftɚ"],["with","和","wˈɪð"],["without","没有","wɨθˈaʊt"],["about","关于","əbˈaʊt"],["against","反对","əɡˈɛnst"],["among","在...之中","əmˈʌŋ"],["at","在","ˈæt"],["by","由","bˈaɪ"],["for","为了","fˈɔr"],["from","从","frˈʌm"],["of","的","ˈʌv"],["to","到","tˈu"],["till","直到","tˈɪl"],["than","比","ðˈæn"],["a","一个","ə"],["the","这个","ðə"],["please","请","plˈiz"],["yes","是","jˈɛs"],["no","不","nˈoʊ"],["if","如果","ˈɪf"],["because","因为","bɨkˈɔz"],["but","但是","bˈʌt"],["and","和","ənd"],["or","或者","ˈɔr"],["though","虽然","ðˈoʊ"],["while","当...时","wˈaɪl"],["how","如何","hˈaʊ"],["when","何时","wˈɛn"],["where","哪里","wˈɛr"],["why","为什么","wˈaɪ"],["who","谁","hˈu"],["I","我","ˈaɪ"],["he","他","hˈi"],["you","你","jˈu"],["that","那个","ðˈæt"],["this","这个","ðˈɪs"],["other","其他","ˈʌðɚ"],["such","这样的","sˈʌtʃ"],["here","这里","hˈir"],["there","那里","ðˈɛr"],["forward","向前","fˈɔrwɚd"],["near","附近","nˈɪr"],["far","远","fˈɑr"],
+],
+"🚗 交通地点 Places & Transport": [
+["car","汽车","kˈɑr"],["bus","公共汽车","bˈʌs"],["train","火车","trˈeɪn"],["boat","船","bˈoʊt"],["ship","轮船","ʃˈɪp"],["plane","飞机","plˈeɪn"],["road","路","rˈoʊd"],["bridge","桥","brˈɪdʒ"],["station","车站","stˈeɪʃən"],["airport","机场","ˈɛrpˌɔrt"],["school","学校","skˈul"],["hospital","医院","hˈɑspˌɪtəl"],["store","商店","stˈɔr"],["market","市场","mˈɑrkət"],["church","教堂","tʃˈɝtʃ"],["library","图书馆","lˈaɪbrɛrˌi"],["park","公园","pˈɑrk"],["street","街道","strˈit"],["town","城镇","tˈaʊn"],["city","城市","sˈɪti"],["office","办公室","ˈɔfɨs"],["hotel","酒店","hoʊtˈɛl"],["restaurant","餐厅","rˈɛstɚˌɑnt"],["bank","银行","bˈæŋk"],["post office","邮局","pˈoʊst ˈɔfɨs"],["prison","监狱","prˈɪzən"],["harbor","港口","hˈɑrbɚ"],["station","车站","stˈeɪʃən"],["garden","花园","ɡˈɑrdən"],["farm","农场","fˈɑrm"],["country","国家","kˈʌntri"],["nation","国家","nˈeɪʃən"],["place","地方","plˈeɪs"],["building","建筑","bˈɪldɨŋ"],["structure","结构","strˈʌktʃɚ"],["room","房间","rˈum"],["space","空间","spˈeɪs"],["edge","边缘","ˈɛdʒ"],["top","顶部","tˈɑp"],["front","前面","frˈʌnt"],["side","旁边","sˈaɪd"],["base","底部","bˈeɪs"],["middle","中间","mˈɪdəl"],
+],
+"😊 感觉品质 Qualities": [
+["happy","开心的","hˈæpi"],["sad","难过的","sˈæd"],["angry","生气的","ˈæŋɡri"],["afraid","害怕的","əfrˈeɪd"],["brave","勇敢的","brˈeɪv"],["good","好的","ɡˈʊd"],["bad","坏的","bˈæd"],["big","大的","bˈɪɡ"],["small","小的","smˈɔl"],["long","长的","lˈɔŋ"],["short","短的","ʃˈɔrt"],["tall","高的","tˈɔl"],["low","低的","lˈoʊ"],["fast","快的","fˈæst"],["slow","慢的","slˈoʊ"],["hot","热的","hˈɑt"],["cold","冷的","kˈoʊld"],["warm","温暖的","wˈɔrm"],["beautiful","美丽的","bjˈutəfəl"],["ugly","丑的","ˈʌɡli"],["clean","干净的","klˈin"],["dirty","脏的","dˈɝti"],["wet","湿的","wˈɛt"],["dry","干的","drˈaɪ"],["heavy","重的","hˈɛvi"],["light","轻的","lˈaɪt"],["hard","硬的","hˈɑrd"],["soft","软的","sˈɑft"],["loud","大声的","lˈaʊd"],["quiet","安静的","kwˈaɪət"],["sweet","甜的","swˈit"],["sour","酸的","sˈaʊɚ"],["fresh","新鲜的","frˈɛʃ"],["tired","累的","tˈaɪɚd"],["hungry","饿的","hˈʌŋɡri"],["thirsty","渴的","θˈɝsti"],["sick","生病的","sˈɪk"],["well","健康的","wˈɛl"],["strong","强壮的","strˈɔŋ"],["weak","虚弱的","wˈik"],["able","能干的","ˈeɪbəl"],["automatic","自动的","ˌɔtəmˈætɨk"],["broken","破损的","brˈoʊkən"],["cheap","便宜的","tʃˈip"],["chemical","化学的","kˈɛməkəl"],["clear","清楚的","klˈɪr"],["common","常见的","kˈɑmən"],["complex","复杂的","kˈɑmplɛks"],["conscious","有意识的","kˈɑnʃəs"],["deep","深的","dˈip"],["dependent","依赖的","dɨpˈɛndənt"],["elastic","有弹性的","ɨlˈæstɨk"],["electric","电的","ɨlˈɛktrɨk"],["equal","平等的","ˈikwəl"],["fat","胖的","fˈæt"],["fertile","肥沃的","fˈɝtəl"],["fixed","固定的","fˈɪkst"],["free","自由的","frˈi"],["frequent","频繁的","frˈikwənt"],["hanging","悬挂的","hˈæŋɨŋ"],["healthy","健康的","hˈɛlθi"],["high","高的","hˈaɪ"],["hollow","空心的","hˈɑloʊ"],["important","重要的","ˌɪmpˈɔrtənt"],["kind","善良的","kˈaɪnd"],["living","活着的","lˈɪvɨŋ"],["married","已婚的","mˈɛrid"],["material","物质的","mətˈɪriəl"],["medical","医学的","mˈɛdəkəl"],["military","军事的","mˈɪlətˌɛri"],["natural","自然的","nˈætʃɚəl"],["necessary","必要的","nˈɛsəsˌɛri"],["new","新的","nˈu"],["normal","正常的","nˈɔrməl"],["open","开放的","ˈoʊpən"],["parallel","平行的","pˈɛrəlˌɛl"],["physical","物理的","fˈɪzɨkəl"],["political","政治的","pəlˈɪtəkəl"],["poor","贫穷的","pˈur"],["possible","可能的","pˈɑsəbəl"],["private","私人的","prˈaɪvət"],["probable","很可能的","prˈɑbəbəl"],["quick","快速的","kwˈɪk"],["ready","准备好的","rˈɛdi"],["regular","规律的","rˈɛɡjəlɚ"],["responsible","负责的","rispˈɑnsəbəl"],["right","正确的","rˈaɪt"],["same","相同的","sˈeɪm"],["separate","分开的","sˈɛpɚˌeɪt"],["serious","严肃的","sˈɪriəs"],["sharp","锋利的","ʃˈɑrp"],["smooth","光滑的","smˈuð"],["sticky","粘的","stˈɪki"],["stiff","僵硬的","stˈɪf"],["straight","直的","strˈeɪt"],["sudden","突然的","sˈʌdən"],["thick","厚的","θˈɪk"],["tight","紧的","tˈaɪt"],["true","真实的","trˈu"],["violent","暴力的","vˈaɪələnt"],["waiting","等待的","wˈeɪtɨŋ"],["wide","宽的","wˈaɪd"],["wise","明智的","wˈaɪz"],["young","年轻的","jˈʌŋ"],["awake","醒着的","əwˈeɪk"],["certain","确定的","sˈɝtən"],["complete","完整的","kəmplˈit"],["cruel","残忍的","krˈuəl"],["dead","死的","dˈɛd"],["dear","亲爱的","dˈɪr"],["delicate","精致的","dˈɛləkət"],["different","不同的","dˈɪfɚənt"],["false","错误的","fˈɔls"],["feeble","虚弱的","fˈibəl"],["foolish","愚蠢的","fˈulɨʃ"],["ill","生病的","ˈɪl"],["left","左边的","lˈɛft"],["loose","松的","lˈus"],["narrow","窄的","nˈɛroʊ"],["old","老的","ˈoʊld"],["opposite","相反的","ˈɑpəzət"],["public","公共的","pˈʌblɨk"],["rough","粗糙的","rˈʌf"],["safe","安全的","sˈeɪf"],["secret","秘密的","sˈikrət"],["shut","关闭的","ʃˈʌt"],["simple","简单的","sˈɪmpəl"],["solid","固体的","sˈɑləd"],["special","特别的","spˈɛʃəl"],["strange","奇怪的","strˈeɪndʒ"],["thin","薄的","θˈɪn"],["wrong","错误的","rˈɔŋ"],["surprised","惊讶的","sɚprˈaɪzd"],["interested","感兴趣的","ˈɪntrəstɨd"],["bored","无聊的","bˈɔrd"],["excited","兴奋的","ɨksˈaɪtəd"],["worried","担心的","wˈɝid"],
+],
+"👗 衣物穿着 Clothing": [
+["dress","裙子","drˈɛs"],["shirt","衬衫","ʃˈɝt"],["coat","外套","kˈoʊt"],["hat","帽子","hˈæt"],["shoe","鞋子","ʃˈu"],["boot","靴子","bˈut"],["sock","袜子","sˈɑk"],["glove","手套","ɡlˈʌv"],["stocking","长袜","stˈɑkɨŋ"],["trousers","裤子","trˈaʊzɚz"],["skirt","短裙","skˈɝt"],["pocket","口袋","pˈɑkət"],["button","纽扣","bˈʌtən"],["collar","衣领","kˈɑlɚ"],["thread","线","θrˈɛd"],["needle","针","nˈidəl"],["umbrella","雨伞","əmbrˈɛlə"],["bag","包","bˈæɡ"],["jewel","珠宝","dʒˈuəl"],["watch","手表","wˈɑtʃ"],["umbrella","伞","əmbrˈɛlə"],["silk","丝绸","sˈɪlk"],["wool","羊毛","wˈʊl"],["cotton","棉花","kˈɑtən"],["leather","皮革","lˈɛðɚ"],["cloth","布料","klˈɔθ"],["canvas","帆布","kˈænvəs"],["linen","亚麻","lˈɪnən"],
+],
+"📚 学校学习 School & Learning": [
+["school","学校","skˈul"],["book","书","bˈʊk"],["pen","笔","pˈɛn"],["pencil","铅笔","pˈɛnsəl"],["paper","纸","pˈeɪpɚ"],["word","单词","wˈɝd"],["letter","字母","lˈɛtɚ"],["page","页","pˈeɪdʒ"],["reading","阅读","rˈidɨŋ"],["writing","写作","rˈaɪtɨŋ"],["learning","学习","lˈɝnɨŋ"],["teaching","教学","tˈitʃɨŋ"],["knowledge","知识","nˈɑlədʒ"],["idea","想法","aɪdˈiə"],["thought","思想","θˈɔt"],["question","问题","kwˈɛstʃən"],["answer","答案","ˈænsɚ"],["test","测试","tˈɛst"],["example","例子","ɨɡzˈæmpəl"],["reason","原因","rˈizən"],["fact","事实","fˈækt"],["theory","理论","θˈɪri"],["science","科学","sˈaɪəns"],["art","艺术","ˈɑrt"],["music","音乐","mjˈuzɨk"],["history","历史","hˈɪstɚi"],["language","语言","lˈæŋɡwədʒ"],["story","故事","stˈɔri"],["verse","诗歌","vˈɝs"],["prose","散文","prˈoʊz"],["map","地图","mˈæp"],["picture","图画","pˈɪktʃɚ"],["stamp","邮票","stˈæmp"],["ticket","票","tˈɪkət"],["card","卡片","kˈɑrd"],["ink","墨水","ˈɪŋk"],["chalk","粉笔","tʃˈɑk"],
+],
+"🔧 工具材料 Tools & Materials": [
+["hammer","锤子","hˈæmɚ"],["saw","锯子","sˈɔ"],["nail","钉子","nˈeɪl"],["screw","螺丝","skrˈu"],["wheel","轮子","wˈil"],["chain","链条","tʃˈeɪn"],["pipe","管子","pˈaɪp"],["wire","电线","wˈaɪɚ"],["hook","钩子","hˈʊk"],["blade","刀片","blˈeɪd"],["pump","泵","pˈʌmp"],["engine","引擎","ˈɛndʒən"],["machine","机器","məʃˈin"],["instrument","仪器","ˈɪnstrəmənt"],["apparatus","设备","ˌæpɚˈætəs"],["camera","相机","kˈæmɚə"],["scale","秤","skˈeɪl"],["clock","钟","klˈɑk"],["watch","手表","wˈɑtʃ"],["bell","铃","bˈɛl"],["key","钥匙","kˈi"],["lock","锁","lˈɑk"],["rod","杆","rˈɑd"],["rail","轨道","rˈeɪl"],["spring","弹簧","sprˈɪŋ"],["brake","刹车","brˈeɪk"],["plow","犁","plˈaʊ"],["spade","铲子","spˈeɪd"],["fork","叉子","fˈɔrk"],["knife","刀","nˈaɪf"],["scissors","剪刀","sˈɪzɚz"],["brush","刷子","brˈʌʃ"],["comb","梳子","kˈoʊm"],["umbrella","雨伞","əmbrˈɛlə"],["box","盒子","bˈɑks"],["basket","篮子","bˈæskət"],["bag","包","bˈæɡ"],["bottle","瓶子","bˈɑtəl"],["cup","杯子","kˈʌp"],["plate","盘子","plˈeɪt"],["pot","锅","pˈɑt"],
+],
+
+"💬 日常用语 Everyday": [
+["about","关于","əbˈaʊt"],["across","穿过","əkrˈɔs"],["after","在...之后","ˈæftɚ"],["almost","几乎","ˈɔlmˌoʊst"],["as","作为","ˈæz"],["at","在","ˈæt"],["between","在...之间","bɨtwˈin"],["by","由","bˈaɪ"],["down","向下","dˈaʊn"],["enough","足够的","ɨnˈʌf"],["even","甚至","ˈivɨn"],["far","远的","fˈɑr"],["for","为了","fˈɔr"],["from","从","frˈʌm"],["here","这里","hˈir"],["in","在...里","ɨn"],["little","少的","lˈɪtəl"],["much","多的","mˈʌtʃ"],["near","附近","nˈɪr"],["not","不","nˈɑt"],["now","现在","nˈaʊ"],["of","...的","ˈʌv"],["off","关闭","ˈɔf"],["on","在...上","ˈɑn"],["only","只有","ˈoʊnli"],["out","出","ˈaʊt"],["over","在...上方","ˈoʊvɚ"],["quite","相当","kwˈaɪt"],["so","所以","sˈoʊ"],["still","仍然","stˈɪl"],["then","然后","ðˈɛn"],["there","那里","ðˈɛr"],["through","通过","θrˈu"],["till","直到","tˈɪl"],["to","到","tˈu"],["together","一起","təɡˈɛðɚ"],["under","在...下面","ˈʌndɚ"],["up","向上","ˈʌp"],["very","非常","vˈɛri"],["well","好地","wˈɛl"],["with","和","wˈɪð"],["forward","向前","fˈɔrwɚd"],["again","再次","əɡˈɛn"],["ever","曾经","ˈɛvɚ"],["please","请","plˈiz"],["north","北方","nˈɔrθ"],["south","南方","sˈaʊθ"],["east","东方","ˈist"],["west","西方","wˈɛst"]
+],
+
+"🧠 思想概念 Ideas & Concepts": [
+["agreement","协议","əɡrˈimənt"],["argument","争论","ˈɑrɡjəmənt"],["attention","注意力","ətˈɛnʃən"],["behavior","行为","bɨhˈeɪvjɚ"],["belief","信念","bɨlˈif"],["cause","原因","kˈɑz"],["chance","机会","tʃˈæns"],["change","改变","tʃˈeɪndʒ"],["comfort","舒适","kˈʌmfɚt"],["comparison","比较","kəmpˈɛrəsən"],["condition","条件","kəndˈɪʃən"],["control","控制","kəntrˈoʊl"],["damage","损害","dˈæmədʒ"],["danger","危险","dˈeɪndʒɚ"],["death","死亡","dˈɛθ"],["decision","决定","dɨsˈɪʒən"],["degree","程度","dɨɡrˈi"],["design","设计","dɨzˈaɪn"],["desire","欲望","dɨzˈaɪɚ"],["detail","细节","dɨtˈeɪl"],["development","发展","dɨvˈɛləpmənt"],["difference","差异","dˈɪfɚəns"],["direction","方向","dɚˈɛkʃən"],["discovery","发现","dɨskˈʌvɚi"],["discussion","讨论","dɨskˈʌʃən"],["distance","距离","dˈɪstəns"],["distribution","分配","dˌɪstrəbjˈuʃən"],["division","分割","dɨvˈɪʒən"],["effect","效果","ɨfˈɛkt"],["end","结束","ˈɛnd"],["error","错误","ˈɛrɚ"],["event","事件","ɨvˈɛnt"],["example","例子","ɨɡzˈæmpəl"],["existence","存在","ɛɡzˈɪstəns"],["experience","经验","ɨkspˈɪriəns"],["fear","恐惧","fˈɪr"],["feeling","感觉","fˈilɨŋ"],["form","形式","fˈɔrm"],["harmony","和谐","hˈɑrməni"],["hope","希望","hˈoʊp"],["humor","幽默","hjˈumɚ"],["idea","想法","aɪdˈiə"],["impulse","冲动","ˈɪmpəls"],["increase","增加","ˌɪnkrˈis"],["interest","兴趣","ˈɪntrəst"],["invention","发明","ˌɪnvˈɛnʃən"],["knowledge","知识","nˈɑlədʒ"],["level","水平","lˈɛvəl"],["limit","限制","lˈɪmət"],["list","列表","lˈɪst"],["loss","损失","lˈɔs"],["mark","标记","mˈɑrk"],["measure","测量","mˈɛʒɚ"],["memory","记忆","mˈɛmɚi"],["mind","心智","mˈaɪnd"],["motion","运动","mˈoʊʃən"],["name","名字","nˈeɪm"],["need","需要","nˈid"],["noise","噪音","nˈɔɪz"],["note","笔记","nˈoʊt"],["observation","观察","ˌɑbzɚvˈeɪʃən"],["operation","操作","ˌɑpɚˈeɪʃən"],["opinion","意见","əpˈɪnjən"],["order","顺序","ˈɔrdɚ"],["organization","组织","ˌɔrɡənəzˈeɪʃən"],["part","部分","pˈɑrt"],["peace","和平","pˈis"],["pleasure","快乐","plˈɛʒɚ"],["point","点","pˈɔɪnt"],["power","力量","pˈaʊɚ"],["price","价格","prˈaɪs"],["process","过程","prˈɑsˌɛs"],["produce","生产","prədˈus"],["profit","利润","prˈɑfət"],["progress","进步","prˈɑɡrˌɛs"],["protest","抗议","prˈoʊtˌɛst"],["punishment","惩罚","pˈʌnɨʃmənt"],["purpose","目的","pˈɝpəs"],["quality","质量","kwˈɑləti"],["range","范围","rˈeɪndʒ"],["rate","比率","rˈeɪt"],["reaction","反应","riˈækʃən"],["reason","原因","rˈizən"],["record","记录","rəkˈɔrd"],["regret","后悔","rəɡrˈɛt"],["relation","关系","rilˈeɪʃən"],["request","请求","rɨkwˈɛst"],["respect","尊重","rɨspˈɛkt"],["rest","休息","rˈɛst"],["reward","奖励","rɨwˈɔrd"],["rhythm","节奏","rˈɪðəm"],["rule","规则","rˈul"],["science","科学","sˈaɪəns"],["secret","秘密","sˈikrət"],["selection","选择","səlˈɛkʃən"],["sense","感觉","sˈɛns"],["shame","羞耻","ʃˈeɪm"],["shock","震惊","ʃˈɑk"],["sign","标志","sˈaɪn"],["size","大小","sˈaɪz"],["slope","斜坡","slˈoʊp"],["song","歌曲","sˈɔŋ"],["sort","种类","sˈɔrt"],["sound","声音","sˈaʊnd"],["stage","阶段","stˈeɪdʒ"],["statement","陈述","stˈeɪtmənt"],["step","步骤","stˈɛp"],["structure","结构","strˈʌktʃɚ"],["suggestion","建议","sədʒˈɛstʃən"],["support","支持","səpˈɔrt"],["surprise","惊讶","sɚprˈaɪz"],["system","系统","sˈɪstəm"],["tendency","趋势","tˈɛndənsi"],["test","测试","tˈɛst"],["thing","东西","θˈɪŋ"],["thought","想法","θˈɔt"],["trouble","麻烦","trˈʌbəl"],["use","使用","jˈus"],["value","价值","vˈælju"],["view","观点","vjˈu"],["way","方式","wˈeɪ"],["weight","重量","wˈeɪt"],["word","单词","wˈɝd"],["work","工作","wˈɝk"]
+],
+
+"💼 社会商务 Society & Business": [
+["account","账户","əkˈaʊnt"],["act","行动","ˈækt"],["addition","增加","ədˈɪʃən"],["adjustment","调整","ədʒˈʌstmənt"],["advertisement","广告","ædvˈɝtəzmənt"],["amount","数量","əmˈaʊnt"],["amusement","娱乐","əmjˈuzmənt"],["approval","批准","əprˈuvəl"],["attack","攻击","ətˈæk"],["attempt","尝试","ətˈɛmpt"],["authority","权威","əθˈɔrəti"],["balance","平衡","bˈæləns"],["business","商业","bˈɪznəs"],["committee","委员会","kəmˈɪti"],["company","公司","kˈʌmpənˌi"],["competition","竞争","kˌɑmpətˈɪʃən"],["connection","连接","kənˈɛkʃən"],["credit","信用","krˈɛdət"],["crime","犯罪","krˈaɪm"],["debt","债务","dˈɛt"],["destruction","破坏","dɨstrˈʌkʃən"],["disease","疾病","dɨzˈiz"],["disgust","厌恶","dɨsɡˈʌst"],["driving","驾驶","drˈaɪvɨŋ"],["education","教育","ˌɛdʒəkˈeɪʃən"],["environment","环境","ɨnvˈaɪrənmənt"],["exchange","交换","ɨkstʃˈeɪndʒ"],["expansion","扩张","ɨkspˈænʃən"],["fiction","虚构","fˈɪkʃən"],["fight","战斗","fˈaɪt"],["flight","飞行","flˈaɪt"],["force","力量","fˈɔrs"],["government","政府","ɡˈʌvɚmənt"],["group","群体","ɡrˈup"],["growth","成长","ɡrˈoʊθ"],["guide","引导","ɡˈaɪd"],["history","历史","hˈɪstɚi"],["industry","工业","ˈɪndəstri"],["insurance","保险","ˌɪnʃˈʊrəns"],["journey","旅行","dʒˈɝni"],["language","语言","lˈæŋɡwədʒ"],["law","法律","lˈɔ"],["machine","机器","məʃˈin"],["manager","经理","mˈænədʒɚ"],["meeting","会议","mˈitɨŋ"],["news","新闻","nˈuz"],["offer","提供","ˈɔfɚ"],["owner","所有者","ˈoʊnɚ"],["payment","付款","pˈeɪmənt"],["plant","工厂","plˈænt"],["position","位置","pəzˈɪʃən"],["print","印刷","prˈɪnt"],["property","财产","prˈɑpɚti"],["public","公众","pˈʌblɨk"],["religion","宗教","rɨlˈɪdʒən"],["representative","代表","rˌɛprəzˈɛntətɨv"],["secretary","秘书","sˈɛkrətˌɛri"],["servant","仆人","sˈɝvənt"],["society","社会","səsˈaɪəti"],["tax","税","tˈæks"],["trade","贸易","trˈeɪd"],["transport","运输","trænspˈɔrt"],["trick","诡计","trˈɪk"],["unit","单位","jˈunət"],["war","战争","wˈɔr"]
+],
+
+"🔬 物质材料 Materials & Substances": [
+["acid","酸","ˈæsəd"],["brass","黄铜","brˈæs"],["brick","砖","brˈɪk"],["coal","煤炭","kˈoʊl"],["copper","铜","kˈɑpɚ"],["cork","软木","kˈɔrk"],["glass","玻璃","ɡlˈæs"],["gold","黄金","ɡˈoʊld"],["iron","铁","ˈaɪɚn"],["leather","皮革","lˈɛðɚ"],["linen","亚麻","lˈɪnən"],["liquid","液体","lˈɪkwəd"],["metal","金属","mˈɛtəl"],["paste","浆糊","pˈeɪst"],["powder","粉末","pˈaʊdɚ"],["silk","丝绸","sˈɪlk"],["silver","银","sˈɪlvɚ"],["steam","蒸汽","stˈim"],["steel","钢","stˈil"],["tin","锡","tˈɪn"],["wax","蜡","wˈæks"],["wood","木头","wˈʊd"],["wool","羊毛","wˈʊl"],["canvas","帆布","kˈænvəs"],["cloth","布","klˈɔθ"],["cotton","棉花","kˈɑtən"],
+["arch","拱门","ˈɑrtʃ"],
+["army","军队","ˈɑrmi"],
+["attraction","吸引力","ətrˈækʃən"],
+["behaviour","行为","bɨhˈeɪvjɚ"],
+["bit","一点","bˈɪt"],
+["care","关心","kˈɛr"],
+["carriage","马车","kˈærɨdʒ"],
+["cart","手推车","kˈɑrt"],
+["chief","首领","tʃˈif"],
+["color","颜色","kˈʌlɚ"],
+["colour","颜色","kˈʌlɚ"],
+["copy","复制","kˈɑpi"],
+["cover","覆盖","kˈʌvɚ"],
+["crack","裂缝","krˈæk"],
+["current","当前的","kˈɝənt"],
+["drop","滴落","drˈɑp"],
+["feather","羽毛","fˈɛðɚ"],
+["fowl","家禽","fˈaʊl"],
+["full","满的","fˈʊl"],
+["general","一般的","dʒˈɛnɚəl"],
+["great","伟大的","ɡrˈeɪt"],
+["gray","灰色","ɡrˈeɪ"],
+["harbour","港口","hˈɑrbɚ"],
+["hole","洞","hˈoʊl"],
+["humour","幽默","hjˈumɚ"],
+["jelly","果冻","dʒˈɛli"],
+["kettle","水壶","kˈɛtəl"],
+["land","土地","lˈænd"],
+["lead","引导","lˈɛd"],
+["like","喜欢","lˈaɪk"],
+["look","看","lˈʊk"],
+["mass","大量","mˈæs"],
+["mine","我的","mˈaɪn"],
+["paint","油漆","pˈeɪnt"],
+["plough","犁","plˈaʊ"],
+["poison","毒药","pˈɔɪzən"],
+["polish","抛光","pˈɑlɨʃ"],
+["ray","光线","rˈeɪ"],
+["sail","航行","sˈeɪl"],
+["seat","座位","sˈit"],
+["self","自己","sˈɛlf"],
+["shade","阴影","ʃˈeɪd"],
+["slip","滑倒","slˈɪp"],
+["smash","粉碎","smˈæʃ"],
+["substance","物质","sˈʌbstəns"],
+["twist","扭曲","twˈɪst"],
+["waste","浪费","wˈeɪst"]
+
+],
+
+"🌿 自然与工具 Nature & Tools": [
+["ball","球","bˈɔl"],["band","带子","bˈænd"],["board","板","bˈɔrd"],["branch","树枝","brˈæntʃ"],["bulb","灯泡","bˈʌlb"],["burn","燃烧","bˈɝn"],["burst","爆裂","bˈɝst"],["flag","旗","flˈæɡ"],["fold","折叠","fˈoʊld"],["frame","框架","frˈeɪm"],["grain","谷物","ɡrˈeɪn"],["grip","握紧","ɡrˈɪp"],["gun","枪","ɡˈʌn"],["jewel","珠宝","dʒˈuəl"],["knot","结","nˈɑt"],["net","网","nˈɛt"],["ornament","装饰品","ˈɔrnəmənt"],["parcel","包裹","pˈɑrsəl"],["pin","别针","pˈɪn"],["rail","轨道","rˈeɪl"],["receipt","收据","rɨsˈit"],["rod","杆","rˈɑd"],["root","根","rˈut"],["screw","螺丝","skrˈu"],["seed","种子","sˈid"],["sponge","海绵","spˈʌndʒ"],["stem","茎","stˈɛm"],["tray","托盘","trˈeɪ"],["vessel","容器","vˈɛsəl"],["wheel","轮子","wˈil"],["whip","鞭子","wˈɪp"],["whistle","哨子","wˈɪsəl"]
+],
+
+"👤 身体与健康 Body & Health": [
+["birth","出生","bˈɝθ"],["bite","咬","bˈaɪt"],["blow","打击","blˈoʊ"],["breath","呼吸","brˈɛθ"],["cough","咳嗽","kˈɑf"],["crush","压碎","krˈʌʃ"],["digestion","消化","daɪdʒˈɛstʃən"],["disease","疾病","dɨzˈiz"],["hearing","听力","hˈirɨŋ"],["living","活着的","lˈɪvɨŋ"],["male","男性","mˈeɪl"],["female","女性","fˈimˌeɪl"],["sex","性别","sˈɛks"],["sneeze","打喷嚏","snˈiz"],["wound","伤口","wˈaʊnd"],["pain","疼痛","pˈeɪn"],["sticky","粘的","stˈɪki"],["boiling","沸腾的","bˈɔɪlɨŋ"],["broken","破损的","brˈoʊkən"],["chemical","化学的","kˈɛməkəl"],["dependent","依赖的","dɨpˈɛndənt"],["elastic","弹性的","ɨlˈæstɨk"],["electric","电的","ɨlˈɛktrɨk"],["fertile","肥沃的","fˈɝtəl"],["frequent","频繁的","frˈikwənt"],["hanging","悬挂的","hˈæŋɨŋ"],["hollow","空心的","hˈɑloʊ"],["material","物质的","mətˈɪriəl"],["medical","医学的","mˈɛdəkəl"],["military","军事的","mˈɪlətˌɛri"],["natural","自然的","nˈætʃɚəl"],["necessary","必要的","nˈɛsəsˌɛri"],["physical","物理的","fˈɪzɨkəl"],["political","政治的","pəlˈɪtəkəl"],["probable","很可能的","prˈɑbəbəl"],["responsible","负责的","rispˈɑnsəbəl"],["sudden","突然的","sˈʌdən"],["violent","暴力的","vˈaɪələnt"]
+],
+
+};
+
+// ============ APP STATE ============
+const catNames=Object.keys(WORDS);
+let currentCat=0,currentWord=0,mode='learn',streak=0,totalCorrect=0;
+let quizOpts=[],quizWord=null,quizAnswered=false,quizType='choice'; // choice|listen|spell
+let traceWord='',traceWordCn='';
+let learned=JSON.parse(localStorage.getItem('eng850_learned')||'{}');
+
+function save(){localStorage.setItem('eng850_learned',JSON.stringify(learned))}
+function isLearned(cat,w){return learned[catNames[cat]+'|'+w]||false}
+function markLearned(cat,w){learned[catNames[cat]+'|'+w]=true;save();updateStats()}
+
+// ============ RENDER ============
+function updateStats(){
+let total=0,l=0;
+for(const[cn,words]of Object.entries(WORDS)){
+total+=words.length;
+for(let i=0;i<words.length;i++) if(isLearned(catNames.indexOf(cn),i)) l++;
+}
+document.getElementById('totalLearned').textContent=l;
+document.getElementById('streakCount').textContent=streak;
+document.getElementById('starCount').textContent=totalCorrect;
+document.getElementById('totalWords').textContent=total;
+renderTabs();
+}
+
+function renderTabs(){
+const container=document.getElementById('tabs');
+container.innerHTML=catNames.map((cn,i)=>{
+const done=WORDS[cn].filter((_,j)=>isLearned(i,j)).length;
+const total=WORDS[cn].length;
+return `<div class="tab${i===currentCat?' active':''}" onclick="selectCat(${i})">
+${cn.split(' ')[0]} <span style="font-size:10px;opacity:.7">${done}/${total}</span>
+</div>`;
+}).join('');
+}
+
+function selectCat(i){currentCat=i;currentWord=0;render();updateStats()}
+function setMode(m){
+mode=m;
+document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+document.querySelector('.'+m)?.classList.add('active');
+render();
+}
+
+function render(){
+if(mode==='learn') renderLearn();
+else if(mode==='quiz') renderQuiz();
+else if(mode==='speak') renderSpeak();
+else if(mode==='trace') renderTrace();
+}
+
+// ============ LEARN MODE ============
+function renderLearn(){
+const cn=catNames[currentCat];
+const words=WORDS[cn];
+if(!words||words.length===0) return;
+const[wEn,wCn,wIpa]=words[currentWord];
+const l=isLearned(currentCat,currentWord);
+const total=words.length;
+markLearned(currentCat,currentWord);
+
+document.getElementById('mainArea').innerHTML=`
+<div class="card-container">
+<div class="card" onclick="speakWord('${wEn.replace(/'/g,"\\'")}')">
+<div class="card-inner">
+<div class="emoji-big">${getEmoji(cn,wEn)}</div>
+<div class="word-en">${wEn}</div>
+<div class="word-ipa">/${wIpa}/</div>
+<div class="word-cn">${wCn}</div>
+<div class="tap-hint">👆 点击听发音 | ${l?'✅ 已学':'🆕 新词'}</div>
+</div>
+</div>
+</div>
+<div class="card-nav">
+<button class="nav-btn" ${currentWord===0?'disabled':''} onclick="prevWord()">◀</button>
+<span class="counter">${currentWord+1} / ${total}</span>
+<button class="nav-btn" ${currentWord>=total-1?'disabled':''} onclick="nextWord()">▶</button>
+</div>
+`;
+}
+
+function nextWord(){
+const words=WORDS[catNames[currentCat]];
+if(currentWord<words.length-1){currentWord++;render()}
+}
+function prevWord(){
+if(currentWord>0){currentWord--;render()}
+}
+
+// ============ QUIZ MODE ============
+function renderQuiz(){
+const cn=catNames[currentCat];
+const words=WORDS[cn];
+if(!words||words.length<4) return;
+quizAnswered=false;
+// Rotate quiz types
+const types=['choice','listen','spell'];
+quizType=types[Math.floor(Math.random()*types.length)];
+
+const qi=Math.floor(Math.random()*words.length);
+quizWord={idx:qi,en:words[qi][0],cn:words[qi][1]};
+
+if(quizType==='choice') renderQuizChoice(cn,words,qi);
+else if(quizType==='listen') renderQuizListen(cn,words,qi);
+else renderQuizSpell(cn,words,qi);
+}
+
+function renderQuizChoice(cn,words,qi){
+const wrongs=[];while(wrongs.length<3){
+const ri=Math.floor(Math.random()*words.length);
+if(ri!==qi&&!wrongs.includes(ri)) wrongs.push(ri);
+}
+quizOpts=shuffle([qi,...wrongs]);
+
+document.getElementById('mainArea').innerHTML=`
+<div class="quiz-area">
+<div class="quiz-type-label">📝 看中文选英文</div>
+<div class="quiz-prompt">
+<div class="emoji-big">${getEmoji(cn,quizWord.en)}</div>
+<div class="cn">${quizWord.cn}</div>
+</div>
+<div class="quiz-options" id="quizOpts">
+${quizOpts.map(i=>`<button class="quiz-opt" onclick="answerQuizChoice(${i},this)">${words[i][0]}</button>`).join('')}
+</div>
+<div class="quiz-score">🔥 连对: ${streak} | ⭐ 总分: ${totalCorrect}</div>
+</div>
+`;
+}
+
+function renderQuizListen(cn,words,qi){
+const wrongs=[];while(wrongs.length<3){
+const ri=Math.floor(Math.random()*words.length);
+if(ri!==qi&&!wrongs.includes(ri)) wrongs.push(ri);
+}
+quizOpts=shuffle([qi,...wrongs]);
+// Auto-speak the word
+setTimeout(()=>speakWord(quizWord.en),500);
+
+document.getElementById('mainArea').innerHTML=`
+<div class="quiz-area">
+<div class="quiz-type-label">👂 听发音选中文</div>
+<div class="quiz-prompt">
+<div style="font-size:60px">🔊</div>
+<div class="cn" style="color:#1565C0;cursor:pointer" onclick="speakWord('${quizWord.en.replace(/'/g,"\\'")}')">点击再听一遍</div>
+</div>
+<div class="quiz-options" id="quizOpts">
+${quizOpts.map(i=>`<button class="quiz-opt" onclick="answerQuizListen(${i},this)">${words[i][1]}</button>`).join('')}
+</div>
+<div class="quiz-score">🔥 连对: ${streak} | ⭐ 总分: ${totalCorrect}</div>
+</div>
+`;
+}
+
+function renderQuizSpell(cn,words,qi){
+document.getElementById('mainArea').innerHTML=`
+<div class="quiz-area">
+<div class="quiz-type-label">⌨️ 拼写单词</div>
+<div class="quiz-prompt">
+<div class="emoji-big">${getEmoji(cn,quizWord.en)}</div>
+<div class="cn">${quizWord.cn}</div>
+</div>
+<div style="margin:10px 0">
+<span style="font-size:14px;color:#999">提示: ${quizWord.en.length} 个字母，首字母 "${quizWord.en[0]}"</span>
+</div>
+<input type="text" class="spell-input" id="spellInput" placeholder="输入英文单词..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+<br>
+<button class="spell-submit" onclick="answerQuizSpell()">✅ 确认</button>
+<div class="quiz-score">🔥 连对: ${streak} | ⭐ 总分: ${totalCorrect}</div>
+</div>
+`;
+setTimeout(()=>{const inp=document.getElementById('spellInput');if(inp)inp.focus();},100);
+// Allow Enter key to submit
+setTimeout(()=>{
+const inp=document.getElementById('spellInput');
+if(inp) inp.addEventListener('keydown',e=>{if(e.key==='Enter') answerQuizSpell();});
+},150);
+}
+
+function answerQuizChoice(i,el){
+if(quizAnswered) return;
+quizAnswered=true;
+const correct=i===quizWord.idx;
+if(correct){
+el.classList.add('correct');
+markLearned(currentCat,quizWord.idx);
+streak++;totalCorrect++;
+burstStar(el);
+}else{
+el.classList.add('wrong');
+streak=0;
+const opts=document.querySelectorAll('.quiz-opt');
+opts.forEach(o=>{if(o.textContent===WORDS[catNames[currentCat]][quizWord.idx][0])o.classList.add('correct')});
+}
+updateStats();
+setTimeout(()=>renderQuiz(),correct?800:1400);
+}
+
+function answerQuizListen(i,el){
+if(quizAnswered) return;
+quizAnswered=true;
+const correct=i===quizWord.idx;
+if(correct){
+el.classList.add('correct');
+markLearned(currentCat,quizWord.idx);
+streak++;totalCorrect++;
+burstStar(el);
+}else{
+el.classList.add('wrong');
+streak=0;
+const opts=document.querySelectorAll('.quiz-opt');
+opts.forEach(o=>{if(o.textContent===WORDS[catNames[currentCat]][quizWord.idx][1])o.classList.add('correct')});
+}
+updateStats();
+setTimeout(()=>renderQuiz(),correct?800:1400);
+}
+
+function answerQuizSpell(){
+if(quizAnswered) return;
+const inp=document.getElementById('spellInput');
+if(!inp) return;
+const answer=inp.value.trim().toLowerCase();
+const correct=answer===quizWord.en.toLowerCase();
+quizAnswered=true;
+
+if(correct){
+inp.style.borderColor='#4CAF50';
+inp.style.background='#C8E6C9';
+markLearned(currentCat,quizWord.idx);
+streak++;totalCorrect++;
+burstStar(inp);
+}else{
+inp.style.borderColor='#F44336';
+inp.style.background='#FFCDD2';
+streak=0;
+// Show correct answer with IPA
+const div=document.createElement('div');
+div.style.cssText='color:#4CAF50;font-size:18px;margin-top:8px;font-weight:bold';
+const correctIpa=WORDS[catNames[currentCat]][quizWord.idx][2]||'';
+div.textContent='正确答案: '+quizWord.en+' /'+correctIpa+'/';
+inp.parentElement.appendChild(div);
+}
+updateStats();
+setTimeout(()=>renderQuiz(),correct?800:2000);
+}
+
+// ============ SPEAK MODE (Speech Recognition) ============
+let recognition=null;
+function initSpeech(){
+if(recognition) return true;
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SpeechRecognition) return false;
+recognition=new SpeechRecognition();
+recognition.lang='en-US';
+recognition.interimResults=false;
+recognition.maxAlternatives=3;
+return true;
+}
+
+function renderSpeak(){
+const cn=catNames[currentCat];
+const words=WORDS[cn];
+if(!words||words.length===0) return;
+// Pick a random word from current category
+const wi=Math.floor(Math.random()*words.length);
+const[wEn,wCn,wIpa]=words[wi];
+
+document.getElementById('mainArea').innerHTML=`
+<div class="speak-card">
+<div style="font-size:18px;color:#999;margin-bottom:6px">🎤 大声读出这个单词</div>
+<div class="speak-word">${wEn}</div>
+<div class="word-ipa">/${wIpa}/</div>
+<div class="speak-cn">${wCn}</div>
+<div style="font-size:60px;margin:10px">${getEmoji(cn,wEn)}</div>
+<button class="mic-btn" id="micBtn" onclick="startListening('${wEn.replace(/'/g,"\\'")}',${currentCat},${wi})">🎙️</button>
+<div class="speak-result" id="speakResult"></div>
+<button style="margin-top:12px;padding:8px 20px;border-radius:20px;border:2px solid #FFCC80;background:#fff;color:#FF6F00;font-size:16px;cursor:pointer" onclick="speakWord('${wEn.replace(/'/g,"\\'")}')">🔊 听发音</button>
+<button style="margin-top:12px;padding:8px 20px;border-radius:20px;border:2px solid #FFCC80;background:#fff;color:#FF6F00;font-size:16px;cursor:pointer;margin-left:8px" onclick="renderSpeak()">➡️ 换一个</button>
+</div>
+`;
+}
+
+function startListening(targetWord,cat,wi){
+if(!initSpeech()){
+document.getElementById('speakResult').textContent='⚠️ 你的浏览器不支持语音识别，请用Chrome打开';
+return;
+}
+const micBtn=document.getElementById('micBtn');
+const resultEl=document.getElementById('speakResult');
+micBtn.classList.add('listening');
+micBtn.textContent='🔴';
+resultEl.textContent='正在听...';
+
+recognition.onresult=function(event){
+const said=event.results[0][0].transcript.toLowerCase().trim();
+const correct=said===targetWord.toLowerCase();
+micBtn.classList.remove('listening');
+if(correct){
+micBtn.classList.add('success');
+resultEl.innerHTML='🌟 太棒了! 发音正确!';
+resultEl.style.color='#4CAF50';
+markLearned(cat,wi);
+updateStats();
+burstStar(micBtn);
+}else{
+resultEl.innerHTML=`😊 你说的是 "${said}"<br>再试一次吧! <br><span style="font-size:14px;color:#999">目标: ${targetWord}</span>`;
+resultEl.style.color='#FF6F00';
+}
+setTimeout(()=>{
+micBtn.classList.remove('success');
+micBtn.textContent='🎙️';
+},1500);
+};
+
+recognition.onerror=function(e){
+micBtn.classList.remove('listening');
+micBtn.textContent='🎙️';
+resultEl.textContent='没听清，再试一次吧~';
+resultEl.style.color='#999';
+};
+
+recognition.onend=function(){
+micBtn.classList.remove('listening');
+if(micBtn.textContent==='🔴') micBtn.textContent='🎙️';
+};
+
+recognition.start();
+}
+
+// ============ TRACE MODE (Letter Tracing) ============
+let traceCanvas=null,traceCtx=null,traceIsDrawing=false;
+let traceColor='#FF6F00',traceLineWidth=6;
+
+function renderTrace(){
+const cn=catNames[currentCat];
+const words=WORDS[cn];
+if(!words||words.length===0) return;
+// Pick a word (short ones are better for tracing)
+const shortWords=words.filter(w=>w[0].length<=6);
+const pool=shortWords.length>0?shortWords:words;
+const wi=Math.floor(Math.random()*pool.length);
+const[wEn,wCn,wIpa]=pool[wi];
+traceWord=wEn;traceWordCn=wCn;
+
+document.getElementById('mainArea').innerHTML=`
+<div class="trace-container">
+<div class="trace-word">✏️ 描红练习 — ${wCn}  /${wIpa}/</div>
+<canvas class="trace-canvas" id="traceCanvas" width="320" height="160"></canvas>
+<div class="trace-tools">
+<button class="trace-tool active" style="color:#FF6F00;border-color:#FF6F00" onclick="setTraceColor('#FF6F00',this)">🟠 橙色</button>
+<button class="trace-tool" style="color:#E91E63;border-color:#E91E63" onclick="setTraceColor('#E91E63',this)">🔴 红色</button>
+<button class="trace-tool" style="color:#2196F3;border-color:#2196F3" onclick="setTraceColor('#2196F3',this)">🔵 蓝色</button>
+<button class="trace-tool" style="color:#4CAF50;border-color:#4CAF50" onclick="setTraceColor('#4CAF50',this)">🟢 绿色</button>
+<button class="trace-tool" style="color:#9C27B0;border-color:#9C27B0" onclick="setTraceColor('#9C27B0',this)">🟣 紫色</button>
+<button class="trace-tool" onclick="clearTrace()">🧹 清除</button>
+</div>
+<div style="margin-top:8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+<button style="padding:6px 14px;border-radius:20px;border:none;background:#E8F5E9;color:#2E7D32;font-size:14px;cursor:pointer" onclick="speakWord('${traceWord.replace(/'/g,"\\'")}')">🔊 听发音</button>
+<button style="padding:6px 14px;border-radius:20px;border:none;background:#FFF3E0;color:#E65100;font-size:14px;cursor:pointer" onclick="renderTrace()">➡️ 换一个</button>
+</div>
+</div>
+`;
+
+setTimeout(()=>{
+traceCanvas=document.getElementById('traceCanvas');
+if(!traceCanvas) return;
+// Adjust canvas size for mobile
+const w=Math.min(window.innerWidth-60,320);
+traceCanvas.width=w;
+traceCanvas.height=160;
+traceCtx=traceCanvas.getContext('2d');
+drawTraceGuide();
+setupTraceEvents();
+},100);
+}
+
+function drawTraceGuide(){
+if(!traceCtx||!traceCanvas) return;
+const ctx=traceCtx;
+const cw=traceCanvas.width,ch=traceCanvas.height;
+ctx.clearRect(0,0,cw,ch);
+
+// Draw guide lines
+ctx.strokeStyle='#E0E0E0';
+ctx.lineWidth=1;
+ctx.setLineDash([5,5]);
+ctx.beginPath();
+ctx.moveTo(0,ch/2);
+ctx.lineTo(cw,ch/2);
+ctx.stroke();
+ctx.setLineDash([]);
+
+// Draw the word in light gray as a guide
+ctx.fillStyle='#D0D0D0';
+ctx.font='bold 60px "PingFang SC","Arial Rounded MT Bold",sans-serif';
+ctx.textAlign='center';
+ctx.textBaseline='middle';
+ctx.fillText(traceWord,cw/2,ch/2);
+
+// Draw dotted letter shapes (simplified)
+ctx.fillStyle='#E8E8E8';
+ctx.font='bold 58px "PingFang SC","Arial Rounded MT Bold",sans-serif';
+ctx.fillText(traceWord,cw/2+1,ch/2+1);
+}
+
+function setupTraceEvents(){
+if(!traceCanvas) return;
+// Touch events
+traceCanvas.addEventListener('touchstart',e=>{
+e.preventDefault();
+traceIsDrawing=true;
+const r=traceCanvas.getBoundingClientRect();
+const x=e.touches[0].clientX-r.left;
+const y=e.touches[0].clientY-r.top;
+traceCtx.beginPath();
+traceCtx.moveTo(x,y);
+});
+traceCanvas.addEventListener('touchmove',e=>{
+e.preventDefault();
+if(!traceIsDrawing) return;
+const r=traceCanvas.getBoundingClientRect();
+const x=e.touches[0].clientX-r.left;
+const y=e.touches[0].clientY-r.top;
+traceCtx.lineTo(x,y);
+traceCtx.strokeStyle=traceColor;
+traceCtx.lineWidth=traceLineWidth;
+traceCtx.lineCap='round';
+traceCtx.lineJoin='round';
+traceCtx.stroke();
+});
+traceCanvas.addEventListener('touchend',()=>{traceIsDrawing=false});
+
+// Mouse events (for desktop)
+traceCanvas.addEventListener('mousedown',e=>{
+traceIsDrawing=true;
+const r=traceCanvas.getBoundingClientRect();
+traceCtx.beginPath();
+traceCtx.moveTo(e.clientX-r.left,e.clientY-r.top);
+});
+traceCanvas.addEventListener('mousemove',e=>{
+if(!traceIsDrawing) return;
+const r=traceCanvas.getBoundingClientRect();
+traceCtx.lineTo(e.clientX-r.left,e.clientY-r.top);
+traceCtx.strokeStyle=traceColor;
+traceCtx.lineWidth=traceLineWidth;
+traceCtx.lineCap='round';
+traceCtx.lineJoin='round';
+traceCtx.stroke();
+});
+traceCanvas.addEventListener('mouseup',()=>{traceIsDrawing=false});
+traceCanvas.addEventListener('mouseleave',()=>{traceIsDrawing=false});
+}
+
+function setTraceColor(color,el){
+traceColor=color;
+document.querySelectorAll('.trace-tool').forEach(b=>b.classList.remove('active'));
+el.classList.add('active');
+}
+
+function clearTrace(){
+if(!traceCtx||!traceCanvas) return;
+drawTraceGuide();
+}
+
+// ============ SPEECH ============
+function speakWord(word){
+if('speechSynthesis' in window){
+speechSynthesis.cancel();
+const u=new SpeechSynthesisUtterance(word);
+u.lang='en-US';u.rate=.8;u.pitch=1.2;
+speechSynthesis.speak(u);
+}
+}
+
+// ============ HELPERS ============
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+
+function getEmoji(catName,word){
+const map={
+cat:'🐱',dog:'🐶',bird:'🐦',fish:'🐟',horse:'🐴',cow:'🐮',pig:'🐷',sheep:'🐑',monkey:'🐵',snake:'🐍',rabbit:'🐰',mouse:'🐭',frog:'🐸',bear:'🐻',duck:'🦆',chicken:'🐔',goat:'🐐',elephant:'🐘',lion:'🦁',tiger:'🐯',ant:'🐜',bee:'🐝',whale:'🐋',fox:'🦊',owl:'🦉',turtle:'🐢',snail:'🐌',deer:'🦌',wolf:'🐺',shark:'🦈',crab:'🦀',penguin:'🐧',dinosaur:'🦕',dragon:'🐲',parrot:'🦜',dolphin:'🐬',squirrel:'🐿',spider:'🕷',butterfly:'🦋',rat:'🐀',insect:'🐛',
+apple:'🍎',banana:'🍌',orange:'🍊',bread:'🍞',butter:'🧈',cake:'🎂',cheese:'🧀',egg:'🥚',meat:'🥩',milk:'🥛',rice:'🍚',salt:'🧂',sugar:'🍬',water:'💧',soup:'🍜',potato:'🥔',cookie:'🍪',candy:'🍭',juice:'🧃',tea:'🍵',grape:'🍇',lemon:'🍋',noodle:'🍝',honey:'🍯',coffee:'☕',wine:'🍷',beer:'🍺',salad:'🥗',cream:'🍦',nut:'🥜',berry:'🫐',oil:'🫗',
+head:'🗣',eye:'👁',ear:'👂',nose:'👃',mouth:'👄',tooth:'🦷',tongue:'👅',neck:'🧣',arm:'💪',hand:'✋',finger:'👆',leg:'🦵',foot:'🦶',heart:'❤',brain:'🧠',hair:'💇',face:'😶',
+mother:'👩',father:'👨',baby:'👶',boy:'👦',girl:'👧',friend:'🤝',king:'👑',doctor:'👨‍⚕',teacher:'👩‍🏫',police:'👮',family:'👨‍👩‍👧‍👦',
+house:'🏠',door:'🚪',bed:'🛏',table:'🪑',clock:'🕐',key:'🔑',lock:'🔒',box:'📦',cup:'☕',fork:'🍴',knife:'🔪',spoon:'🥄',book:'📖',money:'💰',umbrella:'☂',lamp:'💡',bell:'🔔',mirror:'🪞',soap:'🧼',ring:'💍',phone:'📱',candle:'🕯',broom:'🧹',
+sun:'☀',moon:'🌙',star:'⭐',cloud:'☁',rain:'🌧',snow:'❄',flower:'🌸',tree:'🌳',leaf:'🍃',mountain:'⛰',island:'🏝',fire:'🔥',rainbow:'🌈',earth:'🌍',sea:'🌊',garden:'🏡',forest:'🌲',lake:'🫧',
+red:'🔴',blue:'🔵',green:'🟢',yellow:'🟡',black:'⚫',white:'⚪',pink:'🩷',orange:'🟠',purple:'🟣',gold:'🥇',silver:'🥈',
+car:'🚗',bus:'🚌',train:'🚂',boat:'⛵',ship:'🚢',plane:'✈',school:'🏫',hospital:'🏥',store:'🏪',library:'📚',park:'🏞',airport:'🛫',hotel:'🏨',bank:'🏦',church:'⛪',bridge:'🌉',road:'🛣',city:'🏙',
+happy:'😊',sad:'😢',angry:'😡',love:'💕',sleep:'😴',eat:'🍽',drink:'🥤',run:'🏃',swim:'🏊',sing:'🎤',dance:'💃',play:'⚽',clap:'👏',think:'🤔',write:'✍',read:'📖',
+"ice cream":'🍦',"post office":'🏤',dress:'👗',shirt:'👔',coat:'🧥',hat:'🎩',shoe:'👞',boot:'🥾',sock:'🧦',glove:'🧤',trousers:'👖',skirt:'👗',
+pen:'🖊',pencil:'✏',paper:'📄',scissors:'✂',hammer:'🔨',nail:'📌',
+};
+if(map[word]) return map[word];
+for(const[k,v]of Object.entries(map)) if(word.includes(k)) return v;
+return '📝';
+}
+
+// ============ SWIPE SUPPORT ============
+let touchStartX=0,touchStartY=0;
+document.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY});
+document.addEventListener('touchend',e=>{
+if(mode!=='learn') return;
+const dx=e.changedTouches[0].clientX-touchStartX;
+const dy=e.changedTouches[0].clientY-touchStartY;
+if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>50){
+if(dx<0) nextWord(); else prevWord();
+}
+});
+
+// ============ KEYBOARD ============
+document.addEventListener('keydown',e=>{
+if(mode!=='learn') return;
+if(e.key==='ArrowRight') nextWord();
+if(e.key==='ArrowLeft') prevWord();
+});
+
+// ============ INIT ============
+updateStats();
+render();
+</script>
+</body>
+</html>
